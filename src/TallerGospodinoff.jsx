@@ -117,7 +117,12 @@ export const SECURITY_LIMITS = Object.freeze({
 
 // Recursos fotográficos locales ('self') y respaldos verificados estrictamente bajo HTTPS
 const PHOTOS = Object.freeze({
-  heroCar: './hero-auto.jpg',
+  citroenFrames: Object.freeze([
+    './citroen-1.jpg',
+    './citroen-2.jpg',
+    './citroen-3.jpg',
+    './citroen-4.jpg',
+  ]),
   heroWorkshop: './hero-taller.jpg',
   heroWorkshopFallback:
     'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=1600&q=85',
@@ -1021,7 +1026,7 @@ export default function TallerGospodinoff() {
                 </div>
               </div>
 
-              {/* Columna de escenario animado: auto ingresando al box de diagnóstico */}
+              {/* Columna de escenario animado: giro orbital del Citroën desde arriba a la izquierda al perfil derecho */}
               <div className="lg:col-span-7">
                 <div className="relative rounded-[30px] bg-black border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.35),0_24px_64px_rgba(0,0,0,0.65)] overflow-hidden">
                   {/* Barra superior del box técnico */}
@@ -1032,43 +1037,61 @@ export default function TallerGospodinoff() {
                         className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#B81D24]"
                       />
                       <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.12em] text-[#D2D2D7] truncate">
-                        Box de Recepción y Diagnóstico · Maldonado
+                        Servicio Oficial Citroën · Box de Recepción
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={() => setCarAnimRun((n) => n + 1)}
-                      aria-label="Repetir animación de ingreso del vehículo"
+                      aria-label="Repetir giro del vehículo Citroën"
                       className="inline-flex items-center gap-1.5 min-h-[36px] px-3 rounded-full bg-white/10 border border-white/20 text-[11px] font-medium text-white hover:bg-white/20 active:scale-[0.97] transition-colors shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2997FF]"
                     >
                       <RotateCcw className="h-3.5 w-3.5 text-[#2997FF]" aria-hidden="true" />
-                      <span>Ver entrada</span>
+                      <span>Ver giro</span>
                     </button>
                   </div>
 
-                  {/* Pista animada del vehículo */}
+                  {/* Escenario orbital del Citroën C5 Aircross */}
                   <div
                     key={carAnimRun}
-                    className="relative px-3 sm:px-6 pt-5 pb-4 overflow-hidden bg-black"
+                    className="relative px-3 sm:px-6 pt-4 pb-4 overflow-hidden bg-black"
                   >
-                    {/* Haz de luz LED frontal proyectado sobre el piso al estacionar */}
+                    {/* Haz de luz LED frontal proyectado sobre el piso al completar el giro */}
                     <div
                       aria-hidden="true"
                       className="tg-headlight-on pointer-events-none absolute right-2 bottom-[24%] h-20 w-44 rounded-full bg-gradient-to-r from-white/30 via-[#2997FF]/15 to-transparent blur-2xl"
                     />
 
-                    {/* Vehículo entrando suavemente al taller desde la izquierda */}
-                    <div className="tg-car-arrive relative mx-auto max-w-[600px]">
+                    {/* Giro orbital del Citroën: inicia arriba a la izquierda y gira hasta el perfil derecho */}
+                    <div className="tg-orbit-stage relative mx-auto max-w-[600px] h-[220px] sm:h-[300px]">
                       <img
-                        src={PHOTOS.heroCar}
-                        alt="Vehículo ingresando al box de diagnóstico técnico de Taller Gospodinoff"
+                        src={PHOTOS.citroenFrames[0]}
+                        alt=""
+                        aria-hidden="true"
+                        className="tg-angle-1 absolute inset-0 w-full h-full object-contain select-none"
+                      />
+                      <img
+                        src={PHOTOS.citroenFrames[1]}
+                        alt=""
+                        aria-hidden="true"
+                        className="tg-angle-2 absolute inset-0 w-full h-full object-contain select-none"
+                      />
+                      <img
+                        src={PHOTOS.citroenFrames[2]}
+                        alt=""
+                        aria-hidden="true"
+                        className="tg-angle-3 absolute inset-0 w-full h-full object-contain select-none"
+                      />
+                      <img
+                        src={PHOTOS.citroenFrames[3]}
+                        alt="Vehículo Citroën C5 Aircross en vista lateral derecha dentro del box de diagnóstico de Taller Gospodinoff"
                         onError={(e) => {
                           e.currentTarget.src = PHOTOS.heroWorkshopFallback;
                         }}
-                        className="w-full h-[210px] sm:h-[290px] object-contain select-none"
+                        className="tg-angle-4 absolute inset-0 w-full h-full object-contain select-none"
                       />
 
-                      {/* Escaneo óptico de diagnóstico computarizado sobre el chasis */}
+                      {/* Escaneo óptico de diagnóstico computarizado al completar el giro */}
                       <div
                         aria-hidden="true"
                         className="tg-scan-beam pointer-events-none absolute inset-y-4 inset-x-0 flex justify-center"
