@@ -1085,10 +1085,10 @@ export default function TallerGospodinoff() {
 
                     {/* Indicadores mecánicos revelados al completar el ingreso */}
                     <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
-                      <div className="tg-pin-1 rounded-2xl bg-neutral-900/80 border border-white/15 px-3 py-2.5 text-center sm:text-left">
-                        <div className="flex items-center justify-center sm:justify-start gap-1.5 text-[#2997FF]">
+                      <div className="tg-pin-1 rounded-2xl bg-neutral-900/80 border border-white/15 px-2.5 sm:px-3 py-2.5 text-center sm:text-left">
+                        <div className="flex flex-col sm:flex-row items-center sm:items-center justify-center sm:justify-start gap-1 sm:gap-1.5 text-[#2997FF]">
                           <Cpu className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white">
+                          <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-white whitespace-nowrap">
                             Escáner ECU
                           </span>
                         </div>
@@ -1097,10 +1097,10 @@ export default function TallerGospodinoff() {
                         </p>
                       </div>
 
-                      <div className="tg-pin-2 rounded-2xl bg-neutral-900/80 border border-white/15 px-3 py-2.5 text-center sm:text-left">
-                        <div className="flex items-center justify-center sm:justify-start gap-1.5 text-[#2997FF]">
+                      <div className="tg-pin-2 rounded-2xl bg-neutral-900/80 border border-white/15 px-2.5 sm:px-3 py-2.5 text-center sm:text-left">
+                        <div className="flex flex-col sm:flex-row items-center sm:items-center justify-center sm:justify-start gap-1 sm:gap-1.5 text-[#2997FF]">
                           <Gauge className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white">
+                          <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-white whitespace-nowrap">
                             Alineación
                           </span>
                         </div>
@@ -1109,10 +1109,10 @@ export default function TallerGospodinoff() {
                         </p>
                       </div>
 
-                      <div className="tg-pin-3 rounded-2xl bg-neutral-900/80 border border-white/15 px-3 py-2.5 text-center sm:text-left">
-                        <div className="flex items-center justify-center sm:justify-start gap-1.5 text-[#B81D24]">
+                      <div className="tg-pin-3 rounded-2xl bg-neutral-900/80 border border-white/15 px-2.5 sm:px-3 py-2.5 text-center sm:text-left">
+                        <div className="flex flex-col sm:flex-row items-center sm:items-center justify-center sm:justify-start gap-1 sm:gap-1.5 text-[#B81D24]">
                           <ShieldCheck className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white">
+                          <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-white whitespace-nowrap">
                             Citroën
                           </span>
                         </div>
@@ -1127,21 +1127,23 @@ export default function TallerGospodinoff() {
             </div>
 
             {/* Vitrina real del taller mecánico en operación */}
-            <div className="mt-10 sm:mt-14 relative rounded-[32px] overflow-hidden shadow-[0_24px_64px_rgba(0,0,0,0.45)] border border-white/15">
-              <img
-                src={PHOTOS.heroWorkshop}
-                alt="Mecánico realizando diagnóstico computarizado en box hidráulico de taller moderno"
-                onError={(e) => {
-                  e.currentTarget.src = PHOTOS.heroWorkshopFallback;
-                }}
-                className="w-full h-[290px] sm:h-[400px] lg:h-[450px] object-cover object-center"
-              />
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C]/90 via-[#0A0A0C]/25 to-transparent"
-              />
+            <div className="mt-10 sm:mt-14 relative rounded-[32px] overflow-hidden bg-[#111114] shadow-[0_24px_64px_rgba(0,0,0,0.45)] border border-white/15">
+              <div className="relative">
+                <img
+                  src={PHOTOS.heroWorkshop}
+                  alt="Mecánico realizando diagnóstico computarizado en box hidráulico de taller moderno"
+                  onError={(e) => {
+                    e.currentTarget.src = PHOTOS.heroWorkshopFallback;
+                  }}
+                  className="w-full h-[240px] sm:h-[340px] md:h-[450px] object-cover object-center"
+                />
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 bg-gradient-to-t from-[#111114] via-[#0A0A0C]/20 to-transparent md:from-[#0A0A0C]/90"
+                />
+              </div>
 
-              <div className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="relative p-4 md:p-0 md:absolute md:inset-x-6 md:bottom-6 grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div className={`rounded-2xl p-4 text-white ${GLASS_DARK}`}>
                   <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#D2D2D7]">
                     <span className="h-2 w-2 rounded-full bg-[#B81D24]" aria-hidden="true" />
