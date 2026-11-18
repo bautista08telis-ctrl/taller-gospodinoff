@@ -49,6 +49,7 @@ import {
   MessageCircle,
   Navigation,
   Phone,
+  RotateCcw,
   Scale,
   Settings,
   ShieldCheck,
@@ -114,9 +115,11 @@ export const SECURITY_LIMITS = Object.freeze({
   MAX_BOOKING_DAYS_AHEAD: 120,
 });
 
-// Recursos fotográficos verificados estrictamente bajo HTTPS (sin contenido mixto)
+// Recursos fotográficos locales ('self') y respaldos verificados estrictamente bajo HTTPS
 const PHOTOS = Object.freeze({
-  heroWorkshop:
+  heroCar: './hero-auto.jpg',
+  heroWorkshop: './hero-taller.jpg',
+  heroWorkshopFallback:
     'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=1600&q=85',
   diagnostics:
     'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1400&q=80',
@@ -546,6 +549,7 @@ export default function TallerGospodinoff() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
   const [addressCopied, setAddressCopied] = useState(false);
+  const [carAnimRun, setCarAnimRun] = useState(1);
 
   // Estado del Asistente Interactivo de Turnos y Presupuestos
   const [formData, setFormData] = useState({
@@ -767,11 +771,11 @@ export default function TallerGospodinoff() {
       {/* ================================================================== */}
       {/* 1. BARRA DE NAVEGACIÓN FLOTANTE (LIQUID GLASS)                     */}
       {/* ================================================================== */}
-      <header className="sticky top-3 z-40 px-3 sm:px-6 pointer-events-none">
+      <header className="fixed top-3 inset-x-0 z-40 px-3 sm:px-6 pointer-events-none">
         <div
-          className={`pointer-events-auto mx-auto max-w-6xl rounded-full px-3 sm:px-5 py-2 transition-all ${GLASS_LIGHT}`}
+          className={`pointer-events-auto mx-auto max-w-6xl rounded-full px-3 sm:px-5 py-2 transition-colors ${GLASS_LIGHT} bg-white/80`}
         >
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
             {/* Identidad visual */}
             <a
               href="#inicio"
@@ -779,7 +783,7 @@ export default function TallerGospodinoff() {
                 e.preventDefault();
                 scrollToSection('inicio');
               }}
-              className="flex items-center gap-2.5 min-h-[44px] pr-2 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0066CC]"
+              className="flex items-center gap-2.5 min-h-[44px] min-w-0 pr-1 sm:pr-2 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0066CC]"
             >
               <span
                 aria-hidden="true"
@@ -788,8 +792,8 @@ export default function TallerGospodinoff() {
                 <Wrench className="h-4 w-4" />
                 <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[#B81D24] ring-2 ring-white" />
               </span>
-              <span className="flex flex-col leading-tight">
-                <span className="text-sm sm:text-[15px] font-semibold tracking-tight text-[#1D1D1F]">
+              <span className="flex flex-col leading-tight min-w-0">
+                <span className="text-[13px] sm:text-[15px] font-semibold tracking-tight text-[#1D1D1F] truncate">
                   {BUSINESS_INFO.name}
                 </span>
                 <span className="text-[11px] font-medium text-[#6E6E73] hidden sm:block">
@@ -816,11 +820,11 @@ export default function TallerGospodinoff() {
             </nav>
 
             {/* Acción principal y botón móvil */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               <button
                 type="button"
                 onClick={() => scrollToSection('turnos')}
-                className="min-h-[44px] px-4 sm:px-5 rounded-full bg-[#1D1D1F] text-white text-[13px] font-medium tracking-tight hover:bg-black active:scale-[0.98] transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0066CC]"
+                className="min-h-[44px] px-3.5 sm:px-5 rounded-full bg-[#1D1D1F] text-white text-xs sm:text-[13px] font-medium tracking-tight whitespace-nowrap hover:bg-black active:scale-[0.98] transition-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0066CC]"
               >
                 Agendar Turno
               </button>
@@ -848,7 +852,7 @@ export default function TallerGospodinoff() {
           <nav
             id="menu-movil-gospodinoff"
             aria-label="Navegación móvil"
-            className={`pointer-events-auto md:hidden mt-2 mx-auto max-w-6xl rounded-[26px] p-4 ${GLASS_LIGHT} bg-white/90`}
+            className={`pointer-events-auto md:hidden mt-2 mx-auto max-w-6xl rounded-[26px] p-4 ${GLASS_LIGHT} bg-white/95`}
           >
             <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-[#6E6E73]">
               {BUSINESS_INFO.subtitle}
@@ -896,118 +900,245 @@ export default function TallerGospodinoff() {
 
       <main id="contenido-principal">
         {/* ================================================================ */}
-        {/* 2. HERO SECTION + AVISO DESTACADO DE UBICACIÓN                   */}
+        {/* 2. HERO SECTION AUTOMOTRIZ + ANIMACIÓN DE INGRESO DEL VEHÍCULO   */}
         {/* ================================================================ */}
         <section
           id="inicio"
-          className="relative overflow-hidden pt-10 pb-16 sm:pt-14 sm:pb-24 px-4 sm:px-6 bg-[#FBFBFD]"
+          className="relative overflow-hidden pt-24 pb-16 sm:pt-28 sm:pb-24 px-4 sm:px-6 bg-[#0A0A0C] text-white"
         >
-          {/* Halo ambiental sutil detrás de los paneles Liquid Glass */}
+          {/* Atmósfera real de taller mecánico en segundo plano con viñeta oscura */}
+          <img
+            src={PHOTOS.heroWorkshop}
+            alt=""
+            aria-hidden="true"
+            onError={(e) => {
+              e.currentTarget.src = PHOTOS.heroWorkshopFallback;
+            }}
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 scale-105"
+          />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-[420px] w-[780px] rounded-full bg-gradient-to-tr from-[#0066CC]/10 via-slate-200/40 to-[#B81D24]/10 blur-3xl"
+            className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0A0A0C]/90 via-[#0A0A0C]/85 to-[#0A0A0C]"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-24 right-1/4 h-[380px] w-[620px] rounded-full bg-[#0066CC]/20 blur-3xl"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1/3 -left-20 h-[300px] w-[420px] rounded-full bg-[#B81D24]/15 blur-3xl"
           />
 
           <div className="relative mx-auto max-w-6xl">
-            {/* Píldora oficial de mudanza en Liquid Glass */}
-            <div className="flex justify-center">
+            {/* Píldora oficial de mudanza en Liquid Glass oscuro */}
+            <div className="flex justify-center lg:justify-start">
               <a
                 href="#contacto"
                 onClick={(e) => {
                   e.preventDefault();
                   scrollToSection('contacto');
                 }}
-                className={`inline-flex items-center gap-2.5 max-w-full rounded-full px-4 py-2 text-xs sm:text-[13px] font-medium text-[#1D1D1F] hover:scale-[1.01] transition-transform ${GLASS_LIGHT}`}
+                className={`inline-flex items-center gap-2.5 max-w-full rounded-full px-4 py-2 text-xs sm:text-[13px] font-medium text-white hover:bg-white/15 transition-colors ${GLASS_DARK}`}
               >
                 <span
                   aria-hidden="true"
                   className="inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-[#B81D24]"
                 />
-                <span className="truncate sm:whitespace-normal text-center">
+                <span className="truncate sm:whitespace-normal">
                   {BUSINESS_INFO.moveNotice}
                 </span>
-                <ChevronRight className="h-4 w-4 shrink-0 text-[#0066CC]" aria-hidden="true" />
+                <ChevronRight className="h-4 w-4 shrink-0 text-[#2997FF]" aria-hidden="true" />
               </a>
             </div>
 
-            {/* Bloque tipográfico central Apple */}
-            <div className="mx-auto mt-8 sm:mt-10 max-w-4xl text-center">
-              <p className="inline-flex items-center gap-2 text-xs sm:text-[13px] font-semibold uppercase tracking-[0.14em] text-[#6E6E73]">
-                <ShieldCheck className="h-4 w-4 text-[#B81D24]" aria-hidden="true" />
-                <span>Servicio Oficial Citroën · Maldonado</span>
-              </p>
+            {/* Escenario principal dividido: mensaje + ingreso animado del vehículo al box */}
+            <div className="mt-8 sm:mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+              {/* Columna de identidad y acciones */}
+              <div className="lg:col-span-5 text-center lg:text-left">
+                <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#D2D2D7]">
+                  <Wrench className="h-4 w-4 text-[#B81D24]" aria-hidden="true" />
+                  <span>Taller Mecánico · Servicio Oficial Citroën</span>
+                </p>
 
-              <h1 className="mt-4 text-4xl sm:text-5xl lg:text-[64px] font-semibold tracking-tight leading-[1.06] text-[#1D1D1F]">
-                Más de 30 años de precisión mecánica para tu vehículo.
-              </h1>
+                <h1 className="mt-4 text-4xl sm:text-5xl xl:text-[56px] font-semibold tracking-tight leading-[1.06] text-white">
+                  Más de 30 años de precisión mecánica para tu vehículo.
+                </h1>
 
-              <p className="mx-auto mt-5 max-w-2xl text-base sm:text-[19px] leading-relaxed text-[#6E6E73]">
-                Servicio Oficial Citroën y atención multimarcas especializada en Maldonado, con
-                foco en Citroën, Nissan y Renault.
-              </p>
+                <p className="mx-auto lg:mx-0 mt-5 max-w-xl text-base sm:text-[18px] leading-relaxed text-[#D2D2D7]">
+                  Servicio Oficial Citroën y atención multimarcas especializada en Maldonado, con
+                  foco en Citroën, Nissan y Renault.
+                </p>
 
-              {/* Llamados a la acción principales */}
-              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-                <button
-                  type="button"
-                  onClick={() => scrollToSection('turnos')}
-                  className="w-full sm:w-auto min-h-[48px] px-7 rounded-full bg-[#1D1D1F] text-white text-[15px] font-medium tracking-tight hover:bg-black active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0066CC]"
-                >
-                  <span>Solicitar turno online</span>
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </button>
+                {/* Llamados a la acción principales */}
+                <div className="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-5">
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection('turnos')}
+                    className="w-full sm:w-auto min-h-[48px] px-7 rounded-full bg-white text-[#1D1D1F] text-[15px] font-semibold tracking-tight whitespace-nowrap hover:bg-[#F5F5F7] active:scale-[0.98] transition-transform inline-flex items-center justify-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2997FF]"
+                  >
+                    <span>Solicitar turno online</span>
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </button>
 
-                <a
-                  href={directWhatsAppHello}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="min-h-[44px] px-3 inline-flex items-center justify-center gap-1.5 text-[16px] font-medium text-[#0066CC] hover:underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0066CC] rounded-full"
-                >
-                  <span>Escribir por WhatsApp</span>
-                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                </a>
+                  <a
+                    href={directWhatsAppHello}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="min-h-[44px] px-3 inline-flex items-center justify-center gap-1.5 text-[15px] font-medium whitespace-nowrap text-[#2997FF] hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2997FF] rounded-full"
+                  >
+                    <span>Escribir por WhatsApp</span>
+                    <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                  </a>
+                </div>
+
+                {/* Accesos rápidos de 1 toque en móviles */}
+                <div className="mt-7 grid grid-cols-3 gap-2.5 sm:hidden">
+                  <a
+                    href={directWhatsAppHello}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex flex-col items-center justify-center min-h-[56px] rounded-2xl p-2.5 text-center text-white ${GLASS_DARK}`}
+                  >
+                    <MessageCircle className="h-5 w-5 text-[#2997FF]" aria-hidden="true" />
+                    <span className="mt-1 text-[11px] font-semibold">WhatsApp</span>
+                  </a>
+                  <a
+                    href={BUSINESS_INFO.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex flex-col items-center justify-center min-h-[56px] rounded-2xl p-2.5 text-center text-white ${GLASS_DARK}`}
+                  >
+                    <MapPin className="h-5 w-5 text-[#B81D24]" aria-hidden="true" />
+                    <span className="mt-1 text-[11px] font-semibold">Mapa</span>
+                  </a>
+                  <a
+                    href={BUSINESS_INFO.landlineHref}
+                    className={`flex flex-col items-center justify-center min-h-[56px] rounded-2xl p-2.5 text-center text-white ${GLASS_DARK}`}
+                  >
+                    <Phone className="h-5 w-5 text-white" aria-hidden="true" />
+                    <span className="mt-1 text-[11px] font-semibold">4227 1626</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Columna de escenario animado: auto ingresando al box de diagnóstico */}
+              <div className="lg:col-span-7">
+                <div className="relative rounded-[30px] bg-black border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.35),0_24px_64px_rgba(0,0,0,0.65)] overflow-hidden">
+                  {/* Barra superior del box técnico */}
+                  <div className="relative z-10 flex items-center justify-between gap-3 px-4 sm:px-6 pt-4 pb-2 border-b border-white/10">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span
+                        aria-hidden="true"
+                        className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#B81D24]"
+                      />
+                      <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.12em] text-[#D2D2D7] truncate">
+                        Box de Recepción y Diagnóstico · Maldonado
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCarAnimRun((n) => n + 1)}
+                      aria-label="Repetir animación de ingreso del vehículo"
+                      className="inline-flex items-center gap-1.5 min-h-[36px] px-3 rounded-full bg-white/10 border border-white/20 text-[11px] font-medium text-white hover:bg-white/20 active:scale-[0.97] transition-colors shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2997FF]"
+                    >
+                      <RotateCcw className="h-3.5 w-3.5 text-[#2997FF]" aria-hidden="true" />
+                      <span>Ver entrada</span>
+                    </button>
+                  </div>
+
+                  {/* Pista animada del vehículo */}
+                  <div
+                    key={carAnimRun}
+                    className="relative px-3 sm:px-6 pt-5 pb-4 overflow-hidden bg-black"
+                  >
+                    {/* Haz de luz LED frontal proyectado sobre el piso al estacionar */}
+                    <div
+                      aria-hidden="true"
+                      className="tg-headlight-on pointer-events-none absolute right-2 bottom-[24%] h-20 w-44 rounded-full bg-gradient-to-r from-white/30 via-[#2997FF]/15 to-transparent blur-2xl"
+                    />
+
+                    {/* Vehículo entrando suavemente al taller desde la izquierda */}
+                    <div className="tg-car-arrive relative mx-auto max-w-[600px]">
+                      <img
+                        src={PHOTOS.heroCar}
+                        alt="Vehículo ingresando al box de diagnóstico técnico de Taller Gospodinoff"
+                        onError={(e) => {
+                          e.currentTarget.src = PHOTOS.heroWorkshopFallback;
+                        }}
+                        className="w-full h-[210px] sm:h-[290px] object-contain select-none"
+                      />
+
+                      {/* Escaneo óptico de diagnóstico computarizado sobre el chasis */}
+                      <div
+                        aria-hidden="true"
+                        className="tg-scan-beam pointer-events-none absolute inset-y-4 inset-x-0 flex justify-center"
+                      >
+                        <div className="h-full w-[2px] bg-gradient-to-b from-transparent via-[#2997FF] to-transparent shadow-[0_0_24px_6px_rgba(41,151,255,0.55)]" />
+                      </div>
+                    </div>
+
+                    {/* Línea técnica de piso de box hidráulico */}
+                    <div
+                      aria-hidden="true"
+                      className="mx-auto mt-1 h-px w-11/12 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                    />
+
+                    {/* Indicadores mecánicos revelados al completar el ingreso */}
+                    <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
+                      <div className="tg-pin-1 rounded-2xl bg-neutral-900/80 border border-white/15 px-3 py-2.5 text-center sm:text-left">
+                        <div className="flex items-center justify-center sm:justify-start gap-1.5 text-[#2997FF]">
+                          <Cpu className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white">
+                            Escáner ECU
+                          </span>
+                        </div>
+                        <p className="mt-0.5 text-[11px] text-[#D2D2D7] hidden sm:block">
+                          Diagnóstico electrónico
+                        </p>
+                      </div>
+
+                      <div className="tg-pin-2 rounded-2xl bg-neutral-900/80 border border-white/15 px-3 py-2.5 text-center sm:text-left">
+                        <div className="flex items-center justify-center sm:justify-start gap-1.5 text-[#2997FF]">
+                          <Gauge className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white">
+                            Alineación
+                          </span>
+                        </div>
+                        <p className="mt-0.5 text-[11px] text-[#D2D2D7] hidden sm:block">
+                          Tren delantero y balanceo
+                        </p>
+                      </div>
+
+                      <div className="tg-pin-3 rounded-2xl bg-neutral-900/80 border border-white/15 px-3 py-2.5 text-center sm:text-left">
+                        <div className="flex items-center justify-center sm:justify-start gap-1.5 text-[#B81D24]">
+                          <ShieldCheck className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white">
+                            Citroën
+                          </span>
+                        </div>
+                        <p className="mt-0.5 text-[11px] text-[#D2D2D7] hidden sm:block">
+                          Servicio Oficial y multimarcas
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Accesos rápidos de 1 toque en móviles */}
-            <div className="mt-8 grid grid-cols-3 gap-2.5 sm:hidden">
-              <a
-                href={directWhatsAppHello}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex flex-col items-center justify-center min-h-[56px] rounded-2xl p-2.5 text-center ${GLASS_LIGHT}`}
-              >
-                <MessageCircle className="h-5 w-5 text-[#0066CC]" aria-hidden="true" />
-                <span className="mt-1 text-[11px] font-semibold text-[#1D1D1F]">WhatsApp</span>
-              </a>
-              <a
-                href={BUSINESS_INFO.mapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex flex-col items-center justify-center min-h-[56px] rounded-2xl p-2.5 text-center ${GLASS_LIGHT}`}
-              >
-                <MapPin className="h-5 w-5 text-[#B81D24]" aria-hidden="true" />
-                <span className="mt-1 text-[11px] font-semibold text-[#1D1D1F]">Mapa</span>
-              </a>
-              <a
-                href={BUSINESS_INFO.landlineHref}
-                className={`flex flex-col items-center justify-center min-h-[56px] rounded-2xl p-2.5 text-center ${GLASS_LIGHT}`}
-              >
-                <Phone className="h-5 w-5 text-[#1D1D1F]" aria-hidden="true" />
-                <span className="mt-1 text-[11px] font-semibold text-[#1D1D1F]">4227 1626</span>
-              </a>
-            </div>
-
-            {/* Vitrina visual en Liquid Glass */}
-            <div className="mt-10 sm:mt-14 relative rounded-[32px] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.12)] border border-black/5">
+            {/* Vitrina real del taller mecánico en operación */}
+            <div className="mt-10 sm:mt-14 relative rounded-[32px] overflow-hidden shadow-[0_24px_64px_rgba(0,0,0,0.45)] border border-white/15">
               <img
                 src={PHOTOS.heroWorkshop}
-                alt="Vehículo en servicio técnico dentro de taller mecánico limpio"
-                className="w-full h-[320px] sm:h-[440px] lg:h-[500px] object-cover"
+                alt="Mecánico realizando diagnóstico computarizado en box hidráulico de taller moderno"
+                onError={(e) => {
+                  e.currentTarget.src = PHOTOS.heroWorkshopFallback;
+                }}
+                className="w-full h-[290px] sm:h-[400px] lg:h-[450px] object-cover object-center"
               />
               <div
                 aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C]/85 via-[#0A0A0C]/25 to-transparent"
+                className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C]/90 via-[#0A0A0C]/25 to-transparent"
               />
 
               <div className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6 grid grid-cols-1 md:grid-cols-3 gap-3">

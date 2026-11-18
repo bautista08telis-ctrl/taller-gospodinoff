@@ -4,8 +4,121 @@ html {
   scroll-behavior: smooth;
 }
 
+@keyframes tg-car-arrive {
+  0% {
+    opacity: 0;
+    transform: translate3d(-112%, 0, 0) scale(0.97);
+  }
+  16% {
+    opacity: 1;
+  }
+  86% {
+    opacity: 1;
+    transform: translate3d(1.2%, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes tg-headlight-on {
+  0%,
+  52% {
+    opacity: 0;
+    transform: scaleX(0.55);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes tg-scan-beam {
+  0%,
+  56% {
+    opacity: 0;
+    transform: translate3d(105%, 0, 0);
+  }
+  64% {
+    opacity: 0.95;
+  }
+  92% {
+    opacity: 0.85;
+    transform: translate3d(-20%, 0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-32%, 0, 0);
+  }
+}
+
+@keyframes tg-pin-reveal {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes tg-fade-only {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.tg-car-arrive {
+  animation: tg-car-arrive 1.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.tg-headlight-on {
+  transform-origin: left center;
+  animation: tg-headlight-on 1.55s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.tg-scan-beam {
+  animation: tg-scan-beam 2.25s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.tg-pin-1 {
+  opacity: 0;
+  animation: tg-pin-reveal 0.42s cubic-bezier(0.23, 1, 0.32, 1) 1.05s forwards;
+}
+
+.tg-pin-2 {
+  opacity: 0;
+  animation: tg-pin-reveal 0.42s cubic-bezier(0.23, 1, 0.32, 1) 1.2s forwards;
+}
+
+.tg-pin-3 {
+  opacity: 0;
+  animation: tg-pin-reveal 0.42s cubic-bezier(0.23, 1, 0.32, 1) 1.35s forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .tg-car-arrive,
+  .tg-headlight-on,
+  .tg-pin-1,
+  .tg-pin-2,
+  .tg-pin-3 {
+    animation: tg-fade-only 0.24s ease-out forwards;
+    opacity: 1;
+    transform: none;
+  }
+
+  .tg-scan-beam {
+    display: none;
   }
 }
